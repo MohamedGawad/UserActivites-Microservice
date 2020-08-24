@@ -1,0 +1,135 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>bsu.chatbot</groupId>
+    <artifactId>UserActivites</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>Chatbot-UserActivites</name>
+    <url>http://rhuanrocha.net/</url>
+    
+    
+    
+    	<!-- Parent needed for MC to build properly -->
+	<parent>
+		<groupId>net.wasdev.wlp.maven.parent</groupId>
+		<artifactId>liberty-maven-app-parent</artifactId>
+		<version>2.1</version>
+	</parent>
+    
+    <properties>     
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<app.name>useractivites</app.name>
+		<failOnMissingWebXml>false</failOnMissingWebXml>
+		<microprofile>2.0.1</microprofile>
+		<maven.surefire.plugin.version>2.20</maven.surefire.plugin.version>
+		<warContext>${app.name}</warContext>
+		<package.file>${project.build.directory}/${app.name}.zip</package.file>
+		<packaging.type>usr</packaging.type>
+    </properties>
+
+
+<dependencies>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>8.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>javax.jms-api</artifactId>
+			<version>2.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.microprofile</groupId>
+			<artifactId>microprofile</artifactId>
+			<version>3.0</version>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20190722</version>
+		</dependency>
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+
+	</dependencies>
+
+   <build>
+		<plugins>
+			<!-- <plugin> <groupId>io.thorntail</groupId> <artifactId>thorntail-maven-plugin</artifactId> 
+				<version>${version.thorntail}</version> <executions> <execution> <phase>package</phase> 
+				<goals> <goal>package</goal> </goals> </execution> </executions> </plugin> 
+				<plugin> <artifactId>maven-surefire-plugin</artifactId> <version>${maven.surefire.plugin.version}</version> 
+				</plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<packagingExcludes>pom.xml</packagingExcludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+   
+   <profiles>
+		<profile>
+			<id>microclimate</id>
+			<activation>
+				<property>
+					<name>libertyEnv</name>
+					<value>microclimate</value>
+				</property>
+			</activation>
+			<build>
+				<directory>${microclimateOutputDir}</directory>
+				<plugins>
+					<!-- Enablement of liberty-maven plugin in microclimate -->
+					<plugin>
+						<groupId>net.wasdev.wlp.maven.plugins</groupId>
+						<artifactId>liberty-maven-plugin</artifactId>
+						<version>2.4.2</version>
+						<extensions>true</extensions>
+						<configuration>
+							<looseApplication>true</looseApplication>
+							<appsDirectory>apps</appsDirectory>
+							<installDirectory>/opt/ibm/wlp</installDirectory>
+							<userDirectory>${project.build.directory}/liberty/wlp/usr</userDirectory>
+							<configDirectory>${basedir}/src/main/liberty/config</configDirectory>
+							<packageFile>${package.file}</packageFile>
+							<include>${packaging.type}</include>
+							<bootstrapProperties>
+								<default.http.port>${testServerHttpPort}</default.http.port>
+								<default.https.port>${testServerHttpsPort}</default.https.port>
+								<app.location>${project.artifactId}-${project.version}.war</app.location>
+								<server.start.wait.time>90</server.start.wait.time>
+							</bootstrapProperties>
+							<installAppPackages>project</installAppPackages>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
+
